@@ -7,4 +7,3 @@ def load_csv_like(filename, delimiter):
       yield (header, re.split(delimiter, line.strip()))
     else:
       header = re.split(delimiter, line.strip())
-
