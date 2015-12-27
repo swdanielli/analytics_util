@@ -14,6 +14,11 @@ def date_range_gen(start_date, end_date):
   for n in range(int((end_date - start_date).days)):
     yield start_date + datetime.timedelta(n)
 
+def dump_data_json(filename, data):
+  f_o = open(filename, 'w')
+  f_o.write(json.dumps(data, sort_keys=True, indent=2))
+  f_o.close()
+
 def filter_event(event, keywords):
   for keyword in keywords:
     if keyword in event:
@@ -42,6 +47,10 @@ def load_csv_like(filename, delimiter):
 def load_users(user_list):
   with open(user_list) as f:
     return [int(re.split('\t', line.strip())[0]) for line in f.readlines()]
+
+def load_user_infos(user_list):
+  with open(user_list) as f:
+    return {re.split('\t', line.strip())[0]: re.split('\t', line.strip())[1:] for line in f.readlines()}
 
 def time_diff(start_time, end_time):
   return (parse(end_time)-parse(start_time)).total_seconds()
