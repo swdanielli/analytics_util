@@ -48,9 +48,25 @@ def load_users(user_list):
   with open(user_list) as f:
     return [int(re.split('\t', line.strip())[0]) for line in f.readlines()]
 
-def load_user_infos(user_list):
-  with open(user_list) as f:
-    return {re.split('\t', line.strip())[0]: re.split('\t', line.strip())[1:] for line in f.readlines()}
+def load_user_infos(user_list, filtered_function=lambda x: False):
+  results = {}
+  for line in open(user_list):
+    items = re.split('\t', line.strip())
+    if not filtered_function(items[0]):
+      results[items[0]] = items[1:]
+  return results
+
+def parse_cond_sql(header, user):
+  user_id = user[header.index('user_id')]
+  group_id = re.match("xblock.partition_service.partition_(\d+)$", user[header.index('key')]).group(1)
+  method_id = user[header.index('value')]
+  return (user_id, group_id, method_id)
+
+def parse_common_sql(header, user, concerned_slots):
+  result = []
+  for slot in concerned_slots:
+    result.append(user[header.index(slot)])
+  return result
 
 def time_diff(start_time, end_time):
   return (parse(end_time)-parse(start_time)).total_seconds()
